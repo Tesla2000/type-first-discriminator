@@ -1,0 +1,22 @@
+[project]
+name = "type_first_discriminator"
+version = "0.1.0"
+description = "Discriminator class with default discriminated field handling for reduced boilerplate"
+authors = [{name = "Tesla2000", email = "fratajczak124@gmail.com"}]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "pydantic>=2.12.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["type_first_discriminator"]

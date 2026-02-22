@@ -1,0 +1,67 @@
+repos:
+#  - repo: https://github.com/Tesla2000/TupleNamer
+#    rev: v0.0.3-alpha
+#    hooks:
+#     - id: tuple_namer
+#       stages: [pre-push]
+  - repo: https://github.com/psf/black
+    rev: 26.1.0
+    hooks:
+      - id: black
+        args: ["--preview", "--line-length", "79"]
+#  - repo: https://github.com/Tesla2000/FunctionSplitter
+#    rev: v0.0.7-alpha
+#    hooks:
+#     - id: function_splitter
+#       stages: [pre-push]
+  - repo: https://github.com/Tesla2000/temp-reorder-python-imports
+    rev: v0.0.1
+    hooks:
+      - id: reorder-python-imports
+        args: [
+          --py37-plus,
+          --py39-plus,
+          --retain-pre-import,
+          'True',
+          --application-directories,
+          "type_first_discriminator",
+        ]
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.3.3
+    hooks:
+      - id: autoflake
+        args: [ --remove-all-unused-imports, --in-place ]
+#  - repo: https://github.com/Tesla2000/StaticMarker
+#    rev: v0.0.3-alpha
+#    hooks:
+#     - id: static_marker
+#       stages: [pre-commit]
+#  - repo: https://github.com/Tesla2000/import-rules-enforcer
+#    rev: 'v0.0.14'
+#    hooks:
+#      - id: import_rules_enforcer
+  - repo: https://github.com/pycqa/flake8
+    rev: '7.3.0'
+    hooks:
+      - id: flake8
+        args: [ "--ignore=E203,W503,E501,E704" ]
+  - repo: https://github.com/Tesla2000/temporary_vulture
+    rev: v0.0.2
+    hooks:
+      - id: vulture
+        args:
+          [
+            ".",
+            "--exclude",
+            ".venv,venv,tests/base.py",
+            "--ignore-attributes-for-classes=.*",
+            "--ignore-decorators=@app.*,@pytest.fixture,@property,@model_validator,@field_serializer,@field_validator",
+            "--ignore-names=Meta,__dict__,cli_cmd,model_post_init,_convert_schema",
+          ]
+        stages: [ pre-commit ]
+  - repo: https://github.com/Tesla2000/any-hook
+    rev: v1.0.7
+    hooks:
+      - id: any-hook
+        args: [--modifiers, '[{"type":"object-to-any"},{"type":"workflow-env-to-example","workflow_paths":[".github/workflows/tests.yml"],"ignored_names":["GH_TOKEN"]},{"type":"pydantic-config-to-model-config"},{"type":"pydantic-v1-to-v2"},{"type":"str-enum-inheritance"},{"type":"forbidden-functions","forbidden_functions":["hasattr"]},{"type":"forbidden-functions","forbidden_functions":["print"],"excluded_paths":["scripts/*","scripts/integration_runners/base.py","kafka/*","aipm_core/pipeline/print_pipeline.py","aipm_core/pipeline/print_title_pipeline.py"]},{"type":"utcnow-to-datetime-now"},{"type":"len-as-bool"},{"type":"typing-to-builtin"}]']
+
