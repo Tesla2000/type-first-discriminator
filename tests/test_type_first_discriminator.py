@@ -1,4 +1,3 @@
-from typing import Annotated
 from typing import Any
 from typing import Literal
 from typing import Union
@@ -8,7 +7,7 @@ from pydantic import BaseModel
 from pydantic import TypeAdapter
 from pydantic import ValidationError
 
-from type_first_discriminator import TypeFirstDiscriminator
+from composite_discriminator import CompositeDiscriminator
 
 
 class A(BaseModel):
@@ -52,40 +51,36 @@ class RequiresY(BaseModel):
 
 @pytest.fixture(scope="module")
 def any_base() -> TypeAdapter:
-    return TypeAdapter(Annotated[Union[A, B], TypeFirstDiscriminator()])
+    return TypeAdapter(CompositeDiscriminator()(Union[A, B]))
 
 
 @pytest.fixture(scope="module")
 def any_custom_field() -> TypeAdapter:
     return TypeAdapter(
-        Annotated[Union[C, D], TypeFirstDiscriminator(type_field="kind")]
+        CompositeDiscriminator(discriminator_type="kind")(Union[C, D])
     )
 
 
 @pytest.fixture(scope="module")
 def any_smart_fallback() -> TypeAdapter:
     return TypeAdapter(
-        Annotated[
-            Union[Overlap, Specific],
-            TypeFirstDiscriminator(mode_on_missing_type="smart"),
-        ]
+        CompositeDiscriminator(alternative_union_modes=("smart",))(
+            Union[Overlap, Specific]
+        )
     )
 
 
 @pytest.fixture(scope="module")
 def any_all_required() -> TypeAdapter:
-    return TypeAdapter(
-        Annotated[Union[RequiresX, RequiresY], TypeFirstDiscriminator()]
-    )
+    return TypeAdapter(CompositeDiscriminator()(Union[RequiresX, RequiresY]))
 
 
 @pytest.fixture(scope="module")
 def any_left_to_right_fallback() -> TypeAdapter:
     return TypeAdapter(
-        Annotated[
-            Union[Overlap, Specific],
-            TypeFirstDiscriminator(mode_on_missing_type="left_to_right"),
-        ]
+        CompositeDiscriminator(alternative_union_modes=("left_to_right",))(
+            Union[Overlap, Specific]
+        )
     )
 
 
@@ -165,17 +160,3 @@ def test_custom_type_field(
     any_custom_field: TypeAdapter, data: Any, expected_type: type
 ) -> None:
     assert isinstance(any_custom_field.validate_python(data), expected_type)
-
-
-def test_custom_callable_discriminator() -> None:
-    adapter = TypeAdapter(
-        Annotated[
-            Union[A, B],
-            TypeFirstDiscriminator(
-                discriminator=lambda data: (
-                    data.get("type") if isinstance(data, dict) else None
-                )
-            ),
-        ]
-    )
-    assert isinstance(adapter.validate_python({"type": "a"}), A)

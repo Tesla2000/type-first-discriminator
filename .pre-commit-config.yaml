@@ -24,7 +24,7 @@ repos:
           --retain-pre-import,
           'True',
           --application-directories,
-          "type_first_discriminator",
+          "composite_discriminator",
         ]
   - repo: https://github.com/PyCQA/autoflake
     rev: v2.3.3
