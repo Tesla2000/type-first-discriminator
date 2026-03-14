@@ -1,6 +1,6 @@
 [project]
 name = "composite_discriminator"
-version = "0.1.1"
+version = "0.1.2"
 description = "Discriminator class with default discriminated field handling for reduced boilerplate"
 authors = [{name = "Tesla2000", email = "fratajczak124@gmail.com"}]
 readme = "README.md"
